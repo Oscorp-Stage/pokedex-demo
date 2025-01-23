@@ -48,7 +48,7 @@ class MainViewModel @Inject constructor(
     mainRepository.fetchPokemonList(
       page = page,
       onStart = { isLoading = true },
-      onComplete = { isLoading = false },
+      onComplete = { isLoading = true },
       onError = { toastMessage = it },
     )
   }
@@ -63,7 +63,7 @@ class MainViewModel @Inject constructor(
   @MainThread
   fun fetchNextPokemonList() {
     if (!isLoading) {
-      pokemonFetchingIndex.value++
+      pokemonFetchingIndex.value+=2
     }
   }
 }
