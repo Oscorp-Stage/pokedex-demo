@@ -29,4 +29,12 @@ interface MainRepository {
     onComplete: () -> Unit,
     onError: (String?) -> Unit,
   ): Flow<List<Pokemon>>
+
+  @WorkerThread
+  fun searchPokemonByName(
+    query: String,
+    onStart: () -> Unit,
+    onComplete: () -> Unit,
+    onError: (String?) -> Unit,
+  ): Flow<List<Pokemon>>
 }

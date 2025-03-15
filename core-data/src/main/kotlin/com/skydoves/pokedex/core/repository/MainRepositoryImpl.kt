@@ -30,6 +30,8 @@ import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onFailure
 import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
@@ -69,4 +71,33 @@ class MainRepositoryImpl @Inject constructor(
       emit(pokemonDao.getAllPokemonList(page).asDomain())
     }
   }.onStart { onStart() }.onCompletion { onComplete() }.flowOn(ioDispatcher)
+
+  @WorkerThread
+  override fun searchPokemonByName(
+    query: String,
+    onStart: () -> Unit,
+    onComplete: () -> Unit,
+    onError: (String?) -> Unit
+  ): Flow<List<Pokemon>> = flow {
+    try {
+      // Fetch and map the results
+      val searchResults = pokemonDao.searchPokemonByName(query)
+
+      // Convert PokemonEntity to Pokemon model objects
+      // This conversion might be different in your implementation
+      val pokemonList = searchResults.map { entity ->
+        Pokemon(
+          page = entity.page,
+          name = entity.name,
+          url = entity.url
+        )
+      }
+
+      emit(pokemonList)
+    } catch (exception: Exception) {
+      onError(exception.message)
+    }
+  }.onStart { onStart() }
+    .onCompletion { onComplete() }
+    .flowOn(Dispatchers.IO)
 }

@@ -33,4 +33,7 @@ interface PokemonDao {
 
   @Query("SELECT * FROM PokemonEntity WHERE page <= :page_")
   suspend fun getAllPokemonList(page_: Int): List<PokemonEntity>
+
+  @Query("SELECT * FROM PokemonEntity WHERE name LIKE '%' || :query || '%'")
+  suspend fun searchPokemonByName(query: String): List<PokemonEntity>
 }
